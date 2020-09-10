@@ -1,9 +1,7 @@
 package com.pedrofonseca.tcc;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
 
@@ -13,6 +11,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
+import com.pedrofonseca.tcc.ui.login.CadastroActivity;
+import com.pedrofonseca.tcc.ui.login.LoginActivity;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -86,11 +86,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
+        if (id == R.id.nav_login) {
 
-        } else if (id == R.id.nav_tools) {
-
+            Intent login = new Intent(this, LoginActivity.class);
+            startActivity(login);
+        } else if (id == R.id.nav_cadastro) {
+            Intent cadastro = new Intent(this, CadastroActivity.class);
+            startActivity(cadastro);
         } else if (id == R.id.nav_send) {
 
         }
