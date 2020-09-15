@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "624022912954",
+    "firebase_url": "https://tcc-pedrofonseca.firebaseio.com",
+    "project_id": "tcc-pedrofonseca",
+    "storage_bucket": "tcc-pedrofonseca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624022912954:android:d8166b521754f02bbba783",
+        "android_client_info": {
+          "package_name": "com.pedrofonseca.tcc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "624022912954-gm1n31c9519kcmhieuc5te6uk4hufk44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC_dGeFXQYBR78t7yGtcUraq8ZR7LX2lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "624022912954-gm1n31c9519kcmhieuc5te6uk4hufk44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
