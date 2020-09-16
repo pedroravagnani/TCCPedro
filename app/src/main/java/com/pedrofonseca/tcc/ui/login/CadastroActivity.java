@@ -2,6 +2,7 @@ package com.pedrofonseca.tcc.ui.login;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -23,6 +24,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pedrofonseca.tcc.R;
 import com.pedrofonseca.tcc.data.FirebaseAuthentication;
@@ -152,22 +156,22 @@ public class CadastroActivity extends AppCompatActivity {
 
         TextView result = findViewById(R.id.result);
 
-
-
         user.setName(username);
         user.setCpf(cpf);
         user.setPassword(password);
         result.setText(""+ user.getName() + ","+ user.getPassword() + "," + user.getCpf() );
-        FirebaseAuthentication auth = new FirebaseAuthentication();
-        if(auth.createUser(user) ){
-        Toast t = Toast.makeText(this.getApplicationContext(),"Usuario Criado", Toast.LENGTH_LONG);
-        t.show();
-            Log.i("IF","entrou no true");
-        }else{
-        Toast t = Toast.makeText(this.getApplicationContext(),"Erro", Toast.LENGTH_LONG);
-        t.show();
-            Log.i("IF","entrou no false");
-        }
+        FirebaseAuth auth = new FirebaseAuthentication().getFirebaseAuthentication();
 
+        auth.createUserWithEmailAndPassword(user.getName(), user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    Log.i("firebase", "completou");
+                    Toast.makeText(CadastroActivity.this, "Sucesso", Toast.LENGTH_SHORT).show();
+                    finish();
+            }else{
+                    Toast.makeText(CadastroActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                }
+        }});
     }
 }
