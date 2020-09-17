@@ -2,6 +2,7 @@ package com.pedrofonseca.tcc.ui.login;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,13 +24,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.pedrofonseca.tcc.R;
+import com.pedrofonseca.tcc.data.FirebaseAuthentication;
+import com.pedrofonseca.tcc.data.User;
 import com.pedrofonseca.tcc.ui.login.LoginViewModel;
 import com.pedrofonseca.tcc.ui.login.LoginViewModelFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    private FirebaseAuth auth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,17 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                User user = new User();
+                user.setPassword(passwordEditText.getText().toString());
+                user.setEmail(usernameEditText.getText().toString());
+                validate(user);
+            }
+        });
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -109,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+      /*  loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
@@ -117,6 +139,7 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+               */
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -128,4 +151,43 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
+
+
+    public void validate(User u){
+       // Log.i("login", u.getEmail());
+        auth = new FirebaseAuthentication().getFirebaseAuthentication();
+        auth.signInWithEmailAndPassword(u.getEmail(),
+                u.getPassword()
+        ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+
+                    Toast.makeText(LoginActivity.this, "We In boys", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else{
+
+                    Toast.makeText(LoginActivity.this, "We're not in boys", Toast.LENGTH_SHORT).show();
+                    try {
+                        throw task.getException();
+                    }catch(FirebaseAuthInvalidCredentialsException e){
+
+                        Toast.makeText(LoginActivity.this, "E-Mail e Senha não correspondem a um usuario", Toast.LENGTH_SHORT).show();
+
+                    }catch(FirebaseAuthInvalidUserException e){
+
+                        Toast.makeText(LoginActivity.this, "Usuario não está cadastrado", Toast.LENGTH_SHORT).show();
+
+                    }
+                    catch (Exception e) {
+
+                        Toast.makeText(LoginActivity.this, "Erro:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+    }
+
 }
