@@ -12,6 +12,10 @@
             android:id="@+id/nav_cadastro"
             android:icon="@android:drawable/ic_menu_edit"
             android:title="@string/Cadastro" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout"
+            android:title="@string/logout" />
     </group>
 
     <item android:title="Communicate">

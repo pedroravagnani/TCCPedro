@@ -3,6 +3,7 @@ package com.pedrofonseca.tcc;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.core.view.GravityCompat;
@@ -11,6 +12,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.pedrofonseca.tcc.data.FirebaseAuthentication;
 import com.pedrofonseca.tcc.ui.login.CadastroActivity;
 import com.pedrofonseca.tcc.ui.login.LoginActivity;
 
@@ -21,14 +24,22 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+        private FirebaseAuth auth;
+        private NavigationView navigationViewL;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        auth = new FirebaseAuthentication().getFirebaseAuthentication();
+        boolean l;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkLogin();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 //        FloatingActionButton fab = findViewById(R.id.fab);
@@ -46,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -62,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -95,6 +108,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(cadastro);
         } else if (id == R.id.nav_send) {
 
+        }else if  (id == R.id.nav_logout){
+            logout();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -111,4 +126,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public boolean checkLogin(){
+        auth = new FirebaseAuthentication().getFirebaseAuthentication();
+        navigationViewL = findViewById(R.id.nav_view);
+        Log.i("Info", navigationViewL.toString());
+         Menu navigationMenu = navigationViewL.getMenu();
+
+        if( auth.getCurrentUser() != null){
+
+            navigationMenu.findItem(R.id.nav_cadastro).setVisible(false);
+            navigationMenu.findItem(R.id.nav_login).setVisible(false);
+            navigationMenu.findItem(R.id.nav_logout).setVisible(true);
+            return true;
+
+        }else{
+            navigationMenu.findItem(R.id.nav_cadastro).setVisible(true);
+            navigationMenu.findItem(R.id.nav_login).setVisible(true);
+            navigationMenu.findItem(R.id.nav_logout).setVisible(false);
+            return false;
+        }
+    }
+
+    public void logout(){
+        auth.signOut();
+        checkLogin();
+        Toast.makeText(getApplicationContext(),"Usuario deslogado",Toast.LENGTH_LONG).show();
+    }
 }
