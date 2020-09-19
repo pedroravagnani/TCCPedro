@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
 
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +64,8 @@ public class LoginActivity extends AppCompatActivity {
                 validate(user);
             }
         });
+
+
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -163,11 +166,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
 
-                    Toast.makeText(LoginActivity.this, "We In boys", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Usuario Logado com sucesso", Toast.LENGTH_SHORT).show();
                     finish();
                 }else{
-
-                    Toast.makeText(LoginActivity.this, "We're not in boys", Toast.LENGTH_SHORT).show();
                     try {
                         throw task.getException();
                     }catch(FirebaseAuthInvalidCredentialsException e){

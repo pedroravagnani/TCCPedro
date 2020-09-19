@@ -14,7 +14,7 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="info">Info</string>
-    <string name="button">On</string>
+    <string name="button">Off</string>
     <string name="Cadastro">Cadastro</string>
     <string name="Login">Login</string>
     <string name="Logar">Login</string>
@@ -30,4 +30,6 @@
     <string name="title_activity_cadastro">CadastroActivity</string>
     <string name="prompt_cpf">Cpf</string>
     <string name="logout">Logout</string>
+    <string name="selectDeviceButton">Select Device</string>
+    <string name="selectDeviceText">Selected Device:</string>
 </resources>
