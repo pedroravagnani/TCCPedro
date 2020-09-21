@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     private final static int REQUEST_ENABLE_BT = 1;
     private final String ARQ_PREF ="ARQPREF";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         auth = new FirebaseAuthentication().getFirebaseAuthentication();
@@ -56,7 +57,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkLogin();
+        SharedPreferences pref = getSharedPreferences(ARQ_PREF, 0);
+        SharedPreferences.Editor editor = pref.edit();
 
+        String selectedDeviceName = pref.getString("deviceName",null);
+        String selectedDeviceAddress = pref.getString("deviceAddress",null);
+
+       if(selectedDeviceName != null) Log.i("INFO/deviceName", selectedDeviceName);
+       if(selectedDeviceAddress != null) Log.i("INFO/deviceAddress", selectedDeviceAddress);
 
 
         TextView selectDeviceText =  findViewById(R.id.selectDeviceText);
@@ -64,6 +72,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 //        FloatingActionButton fab = findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -89,6 +98,10 @@ public class MainActivity extends AppCompatActivity
                 selectedDeviceSearch();
             }
         });
+
+        if(selectedDeviceName!= null || selectedDeviceAddress != null){
+            selectDeviceText.setText("Selected Device Name: "+selectedDeviceName+"\nSelcted Device Address: "+selectedDeviceAddress);
+        }
 
     }
 
@@ -291,18 +304,27 @@ public class MainActivity extends AppCompatActivity
         ArrayList<BluetoothDevice> arrayUserDevices = new ArrayList<BluetoothDevice>();
 
         mBuilder.setTitle("Paired Devices");
-       mBuilder.setMultiChoiceItems(arrayDevices, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                    if(isChecked){
-                        if(! arrayUserDevices.contains(which)){
-                            arrayUserDevices.add(arrayListPairedBluetoothDevices.get(which));
-                        }else {
-                            arrayUserDevices.remove(arrayListPairedBluetoothDevices.get(which));
-                        }
-                    }
-                }
-        });
+//       mBuilder.setMultiChoiceItems(arrayDevices, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+//                    if(isChecked){
+//                        if(! arrayUserDevices.contains(which)){
+//                            arrayUserDevices.add(arrayListPairedBluetoothDevices.get(which));
+//                        }else {
+//                            arrayUserDevices.remove(arrayListPairedBluetoothDevices.get(which));
+//                        }
+//                    }
+//                }
+//        });
+
+    mBuilder.setSingleChoiceItems(arrayDevices, -1, new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            arrayUserDevices.clear();
+            arrayUserDevices.add(arrayListPairedBluetoothDevices.get(which));
+        }
+    });
+
 
        mBuilder.setCancelable(false);
        mBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -310,27 +332,36 @@ public class MainActivity extends AppCompatActivity
 
            public void onClick(DialogInterface dialog, int which) {
 
-               String json ="{\n";
+//               String json ="\n";
+               String deviceName = null;
+               String deviceAddress = null;
                for (int i = 0; i < arrayUserDevices.size(); i++) {
-                   json += "\""+i+"\" : {";
+                 // json += "\""+i+"\" : {";
+  //                 json += "{";
                    Log.i("INFO/Bluetooth devices selected", arrayUserDevices.get(i).toString());
                    Log.i("INFO/Bluetooth devices selected", arrayUserDevices.get(i).getName());
-                   json += "\"name\":\"" +arrayUserDevices.get(i).getName() +"\",";
-                   json += "\"address\":\"" +arrayUserDevices.get(i).getAddress()+"\"";
-                  if(i+1==arrayUserDevices.size()){ json += "\n}";}
-                  else{json += "\n},";}
+                   deviceName = arrayUserDevices.get(i).getName();
+                   deviceAddress = arrayUserDevices.get(i).getAddress();
+//                   json += "\"name\":\"" +arrayUserDevices.get(i).getName() +"\",";
+//                   json += "\"address\":\"" +arrayUserDevices.get(i).getAddress()+"\"";
+//                  if(i+1==arrayUserDevices.size()){ json += "\n}";}
+//                  else{json += "\n},";}
 //                   json += "bluetoothClass\":" +arrayUserDevices.get(i).getBluetoothClass()+"\",\n";
 //                   json += "bondState\":" +arrayUserDevices.get(i).getBondState()+"\",\n";
 //                   json += "type\":" +arrayUserDevices.get(i).getType()+"\",\n";
 //                   json += "uuids\":" +arrayUserDevices.get(i).getUuids()+"\",\n";
 //                   json += "class \":" +arrayUserDevices.get(i).getClass()+"\"";
                }
-               json += "\n}";
+              // json += "\n}";
 
-               Log.i("INFO/the GSON",json);
-               editor.putString("arrayUserDevices", json);
+//               Log.i("INFO/the GSON",json);
+               Log.i("INFO/the Name",deviceName);
+               Log.i("INFO/the Address",deviceAddress);
+               editor.putString("deviceName", deviceName);
+               editor.putString("deviceAddress", deviceAddress);
                editor.commit();
            }});
+
        mBuilder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
            @Override
            public void onClick(DialogInterface dialog, int which) {
